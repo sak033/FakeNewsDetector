@@ -32,11 +32,3 @@ The trained model and vectorizer are saved as:
 - `model.pkl`
 - `vectorizer.pkl`
 
-## 🛠️ Installation
-
-Clone the repo and install the dependencies:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/FakeNewsDetector.git
-cd FakeNewsDetector
-pip install -r requirements.txt
