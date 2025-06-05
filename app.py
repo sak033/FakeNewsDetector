@@ -1,7 +1,9 @@
 import streamlit as st
 import joblib
+import pandas as pd
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import requests
 
 # Load model and vectorizer
 model = joblib.load('model.pkl')
@@ -12,13 +14,13 @@ st.set_page_config(page_title="Fake News Detector", page_icon="📰", layout="ce
 
 # --- Custom CSS styling ---
 st.markdown("""
-    <style>
-        .main { background-color: #f5f7fa; }
-        .stButton > button {
-            color: white;
-            background-color: #0066cc;
-        }
-    </style>
+<style>
+    .main { background-color: #f5f7fa; }
+    .stButton > button {
+        color: white;
+        background-color: #0066cc;
+    }
+</style>
 """, unsafe_allow_html=True)
 
 # --- Title and Description ---
@@ -36,7 +38,7 @@ if st.button("🔍 Check News"):
     else:
         vector_input = vectorizer.transform([user_input])
         prediction = model.predict(vector_input)[0]
-        proba = model.decision_function([user_input])
+        proba = model.decision_function(vector_input)
         confidence = round((abs(proba[0]) / max(abs(proba))) * 100, 2)
 
         if prediction == 1:
@@ -46,12 +48,11 @@ if st.button("🔍 Check News"):
 
         st.info(f"🧠 Confidence Score: {confidence}%")
 
-# --- Word Cloud Section ---
+# --- Sidebar WordCloud ---
 st.sidebar.header("🌀 WordCloud Viewer")
 word_type = st.sidebar.selectbox("Choose news type:", ["Fake", "Real"])
 
 if st.sidebar.button("Generate WordCloud"):
-    import pandas as pd
     fake = pd.read_csv("Fake.csv")
     real = pd.read_csv("True.csv")
     if word_type == "Fake":
@@ -65,6 +66,28 @@ if st.sidebar.button("Generate WordCloud"):
     plt.imshow(wc, interpolation='bilinear')
     plt.axis('off')
     st.pyplot(plt)
+
+# --- Live News Headlines ---
+st.sidebar.header("🗞️ Live News Headlines")
+if st.sidebar.button("Fetch Top Headlines"):
+    api_key = "85ca277914ad42da9cbad5e32cd8189b"  # Replace with your actual API key
+    country = "in"
+
+    url = f"https://newsapi.org/v2/top-headlines?country={country}&apiKey={api_key}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data["status"] == "ok":
+            st.subheader("📰 Top Headlines:")
+            for i, article in enumerate(data["articles"][:5]):
+                st.markdown(f"### {i+1}. {article['title']}")
+                st.write(article["description"] or "No description available")
+                st.write(f"[Read more]({article['url']})")
+                st.markdown("---")
+        else:
+            st.error("❌ Failed to fetch news. Please check your API key or try again later.")
+    except Exception as e:
+        st.error(f"⚠️ Error fetching news: {e}")
 
 # --- Footer ---
 st.markdown("---")
