@@ -5,3 +5,6 @@ nltk
 joblib
 wordcloud
 newspaper3k
+lxml
+cssselect
+beautifulsoup4
