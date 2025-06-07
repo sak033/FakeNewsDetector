@@ -4,8 +4,9 @@ pandas
 nltk
 joblib
 wordcloud
-newspaper3k
-lxml
-cssselect
-beautifulsoup4
+newspaper3k==0.2.8
+lxml==4.9.3
+cssselect==1.2.0
+beautifulsoup4==4.12.2
+
 
