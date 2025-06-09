@@ -1,7 +1,1 @@
-streamlit
-scikit-learn
-pandas
-nltk
-joblib
-wordcloud
-newspaper3k
+
